@@ -1,0 +1,24 @@
+services:
+  app:
+    image: adminer
+    container_name: shortsaasurl
+    ports:
+      - "8083:8080"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    container_name: my_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:  ${POSTGRES_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
