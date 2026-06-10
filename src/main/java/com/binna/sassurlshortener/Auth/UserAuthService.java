@@ -1,17 +1,19 @@
 package com.binna.sassurlshortener.Auth;
 
 import com.binna.sassurlshortener.Entity.UserInfo;
+import com.binna.sassurlshortener.Exceptions.ResourceNotFoundException;
 import com.binna.sassurlshortener.Repositories.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -21,26 +23,20 @@ public class UserAuthService implements UserDetailsService {
     //private final PasswordEncoder encoder;
 
 
+
     // Method to load user details by username (email)
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         // Fetch user from the database by email (username)
-        Optional<UserInfo> userInfo = repository.findByEmail(username);
+        Optional<UserInfo> userInfoOptional = repository.findByEmail(email);
+        if (userInfoOptional.isEmpty()) throw new ResourceNotFoundException("User Not Found");
+        UserInfo user = userInfoOptional.get();
+        Set<GrantedAuthority> authorties = user.getRoles()
+                .stream()
+                .map(item->new SimpleGrantedAuthority(item.name())).collect(Collectors.toSet());
 
-        if (userInfo.isEmpty()) {
-            throw new UsernameNotFoundException("User not found with email: " + username);
-        }
-
-        // Convert UserInfo to UserDetails (UserInfoDetails)
-        UserInfo user = userInfo.get();
-        return new User(user.getEmail(), user.getPassword(), user.getRoles());
+        return new AuthUserDetail(user.getEmail(), user.getPassword(), authorties);
     }
 
-    // Add any additional methods for registering or managing users
-    public String addUser(UserInfo userInfo) {
-         //Encrypt password before saving
-        userInfo.setPassword(encoder.encode(userInfo.getPassword()));
-        repository.save(userInfo);
-        return "User added successfully!";
-    }
+
 }

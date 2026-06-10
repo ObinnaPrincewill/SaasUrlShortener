@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice // Global exception handler for all controllers
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends RuntimeException{
 
     // Method to handle IllegalArgumentException
     @ExceptionHandler(ResourceNotFoundException.class)
