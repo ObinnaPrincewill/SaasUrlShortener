@@ -1,13 +1,18 @@
 package com.binna.sassurlshortener.Auth;
 
+import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+
+@RequiredArgsConstructor
+@Component
 public class AuthUserDetail implements UserDetails {
 
     private String username; // Changed from 'name' to 'email' for clarity

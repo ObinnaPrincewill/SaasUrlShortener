@@ -7,5 +7,5 @@ import com.binna.sassurlshortener.DTOs.Response.ResponseWrapper;
 
 public interface UserServiceInterface {
     ResponseWrapper<AuthResponse> signup (CreateUserRequest payload);
-    AuthResponse login (LoginRequest payload);
+    ResponseWrapper<AuthResponse>  login (LoginRequest payload);
 }
